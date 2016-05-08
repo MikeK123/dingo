@@ -8,7 +8,7 @@ import (
 	"os"
 	"text/template"
 
-	"github.com/maxzerbini/dingo/model"
+	"github.com/MikeK123/dingo/model"
 )
 
 const (

@@ -3,7 +3,7 @@ package {{.PackageName}}
 {{range .ImportPackages}}import "{{.}}"
 {{end}}{{end}}
 {{range .ModelTypes}}
-// Data transfer object for {{.TypeName}}
+// {{.TypeName}} data transfer object
 type {{.TypeName}} struct {
 	{{range .Fields}}{{.FieldName}} {{.FieldType}} `{{.FieldMetadata}}`
 	{{end}}

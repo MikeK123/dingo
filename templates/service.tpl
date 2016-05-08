@@ -33,7 +33,7 @@ func (s *{{.TypeName}}) Update(c *gin.Context) {
 	id := c.Params.ByName("id")
 	var v {{.ViewModel.PackageName}}.{{.ViewModel.TypeName}}
 	if c.BindJSON(&v) == nil {
-		value,err := s.Biz.UpdateById(id, &v)
+		value,err := s.Biz.UpdateByID(id, &v)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, err)
 		} else {
@@ -47,7 +47,7 @@ func (s *{{.TypeName}}) Update(c *gin.Context) {
 func (s *{{.TypeName}}) Delete(c *gin.Context) {
 	id := c.Params.ByName("id")
 	if id != "" {
-		value,err := s.Biz.DeleteById(id)
+		value,err := s.Biz.DeleteByID(id)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, err)
 		} else {
@@ -61,7 +61,7 @@ func (s *{{.TypeName}}) Delete(c *gin.Context) {
 func (s *{{.TypeName}}) Find(c *gin.Context) {
 	id := c.Params.ByName("id")
 	if id != "" {
-		value,err := s.Biz.FindById(id)
+		value,err := s.Biz.FindByID(id)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, err)
 		} else {

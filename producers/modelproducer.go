@@ -5,7 +5,7 @@ import (
 	"log"
 	"strings"
 
-	"github.com/maxzerbini/dingo/model"
+	"github.com/MikeK123/dingo/model"
 )
 
 func ProduceModelPackage(config *model.Configuration, schema *model.DatabaseSchema) (pkg *model.ModelPackage) {
@@ -64,6 +64,11 @@ func getModelFieldName(fieldname string) string {
 	name := strings.Replace(fieldname, "-", " ", -1)
 	name = strings.Replace(name, "_", " ", -1)
 	name = strings.Title(name)
+	// MK: ifsuffix is id thenreplace with capital ID
+	if strings.HasSuffix(name, " Id") {
+		name = strings.TrimSuffix(name, "Id")
+		name += "ID"
+	}
 	name = strings.Replace(name, " ", "", -1)
 	return name
 }
@@ -90,10 +95,12 @@ func getModelFieldType(pkg *model.ModelPackage, column *model.Column) string {
 		}
 	case "tinyint", "smallint":
 		if column.IsNullable {
-			ft = "sql.NullInt32"
+			// MK: seams NullInt32 doesn't exist, replaced with NullInt64
+			ft = "sql.NullInt64"
 			pkg.AppendImport("database/sql")
 		} else {
-			ft = "int32"
+			// MK: Same here
+			ft = "int64"
 		}
 	case "int", "mediumint", "bigint":
 		if column.IsNullable {

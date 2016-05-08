@@ -3,7 +3,7 @@ package producers
 import (
 	"log"
 
-	"github.com/maxzerbini/dingo/model"
+	"github.com/MikeK123/dingo/model"
 )
 
 func ProduceViewModelPackage(config *model.Configuration, schema *model.DatabaseSchema) (pkg *model.ViewModelPackage) {
@@ -48,7 +48,7 @@ func getViewModelFieldType(pkg *model.ViewModelPackage, column *model.Column) st
 		ft = "time.Time"
 		pkg.AppendImport("time")
 	case "tinyint", "smallint":
-		ft = "int32"
+		ft = "int64"
 	case "int", "mediumint", "bigint":
 		ft = "int64"
 	case "float", "decimal", "double":

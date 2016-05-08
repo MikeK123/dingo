@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	_ "github.com/lib/pq"
-	"github.com/maxzerbini/dingo/model"
+	"github.com/MikeK123/dingo/model"
 )
 
 func TestPostgresExploreDatabase(t *testing.T) {

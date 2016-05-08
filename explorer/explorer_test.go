@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/MikeK123/dingo/model"
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/maxzerbini/dingo/model"
 )
 
 var conf model.Configuration

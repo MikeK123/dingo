@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	_ "github.com/lib/pq"
-	"github.com/maxzerbini/dingo/model"
+	"github.com/MikeK123/dingo/model"
 )
 
 type PostgreSqlExplorer struct {

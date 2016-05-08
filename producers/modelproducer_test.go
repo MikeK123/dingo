@@ -3,8 +3,8 @@ package producers
 import (
 	"testing"
 
-	"github.com/maxzerbini/dingo/explorer"
-	"github.com/maxzerbini/dingo/model"
+	"github.com/MikeK123/dingo/explorer"
+	"github.com/MikeK123/dingo/model"
 )
 
 var config *model.Configuration

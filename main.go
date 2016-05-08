@@ -6,10 +6,10 @@ import (
 	"runtime"
 	"runtime/debug"
 
-	"github.com/maxzerbini/dingo/explorer"
-	"github.com/maxzerbini/dingo/generators"
-	"github.com/maxzerbini/dingo/model"
-	"github.com/maxzerbini/dingo/producers"
+	"github.com/MikeK123/dingo/explorer"
+	"github.com/MikeK123/dingo/generators"
+	"github.com/MikeK123/dingo/model"
+	"github.com/MikeK123/dingo/producers"
 )
 
 var configPath string = "./config.json"

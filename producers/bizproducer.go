@@ -1,7 +1,7 @@
 package producers
 
 import (
-	"github.com/maxzerbini/dingo/model"
+	"github.com/MikeK123/dingo/model"
 )
 
 func ProduceBizPackage(config *model.Configuration, mpkg *model.ModelPackage, daopkg *model.DaoPackage, viewpkg *model.ViewModelPackage) (pkg *model.BizPackage) {

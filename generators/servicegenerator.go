@@ -6,7 +6,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/maxzerbini/dingo/model"
+	"github.com/MikeK123/dingo/model"
 )
 
 const (

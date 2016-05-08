@@ -3,8 +3,8 @@ package producers
 import (
 	"strings"
 
-	"github.com/maxzerbini/dingo/model"
-	"github.com/maxzerbini/dingo/util"
+	"github.com/MikeK123/dingo/model"
+	"github.com/MikeK123/dingo/util"
 )
 
 func ProduceServicePackage(config *model.Configuration, viewpkg *model.ViewModelPackage, bizpkg *model.BizPackage) (pkg *model.ServicePackage) {

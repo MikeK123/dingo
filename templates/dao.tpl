@@ -26,7 +26,7 @@ func (dao *{{.TypeName}}) Insert(conn *sql.DB, dto *{{.Model.PackageName}}.{{.Mo
 func (dao *{{.TypeName}}) Update(conn *sql.DB, dto *{{.Model.PackageName}}.{{.Model.TypeName}})(rowsAffected int64, err error) {
 	q := "UPDATE {{.Entity.TableName}} SET {{range $i, $e := .Entity.OtherColumns}}{{if $i}}, {{end}}{{.ColumnName}}=?{{end}}"
 	q += " WHERE {{range $i, $e := .Entity.PrimaryKeys}}{{if $i}} AND {{end}}{{.ColumnName}} = ?{{end}}"
-	res, err := conn.Exec(q, {{range $i, $e := .Model.OtherFields}}{{if $i}}, {{end}}dto.{{.FieldName}}{{end}}, {{range $i, $e := .Model.PKFields}}{{if $i}}, {{end}}dto.{{.FieldName}}{{end}})
+	res, err := conn.Exec(q{{if .Model.OtherFields}},{{end}} {{range $i, $e := .Model.OtherFields}}{{if $i}}, {{end}}dto.{{.FieldName}}{{end}}, {{range $i, $e := .Model.PKFields}}{{if $i}}, {{end}}dto.{{.FieldName}}{{end}})
     if err != nil {
 		return -1, err
 	}

@@ -9,6 +9,7 @@ import "github.com/gin-gonic/gin"
 import "{{.BasePackage}}/{{.PackageName}}"
 import "{{.BasePackage}}/dao"
 
+// Configuration groups neccessary flags
 type Configuration struct {
 	DatabaseHostname              string
 	DatabasePort                  string

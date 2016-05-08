@@ -5,14 +5,14 @@ import (
 	"os"
 	"testing"
 
-	"github.com/maxzerbini/dingo/model"
+	"github.com/MikeK123/dingo/model"
 )
 
 var config *model.Configuration
 
 func init() {
 	gopath := os.Getenv("GOPATH")
-	testProjectPath := gopath + "/src/github.com/maxzerbini/prjtest"
+	testProjectPath := gopath + "/src/github.com/MikeK123/prjtest"
 	if _, err := os.Stat(testProjectPath); os.IsNotExist(err) {
 		err = os.MkdirAll(testProjectPath, 0777)
 		if err != nil {
