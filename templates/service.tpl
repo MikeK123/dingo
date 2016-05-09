@@ -5,16 +5,16 @@ package {{.PackageName}}
 import "strconv"
 import "net/http"
 {{range .ServiceTypes}}
-// Service object for {{.TypeName}}
+// {{.TypeName}} service object
 type {{.TypeName}} struct {
 	{{range .Fields}}{{.FieldName}} {{.FieldType}}
 	{{end}}
 }
-//Create a {{.TypeName}}
+// New{{.TypeName}} creates an instance of {{.TypeName}}
 func New{{.TypeName}}() *{{.TypeName}} {
 	return &{{.TypeName}}{ Biz:{{.Biz.PackageName}}.New{{.Biz.TypeName}}() }
 }
-{{if .IsSimplePK}}// Endpoint POST [basehost]/{{.ResourceName}}
+{{if .IsSimplePK}}// Insert serves the endpoint POST [basehost]/{{.ResourceName}}
 func (s *{{.TypeName}}) Insert(c *gin.Context) {
 	var v {{.ViewModel.PackageName}}.{{.ViewModel.TypeName}}
 	if c.BindJSON(&v) == nil {
@@ -28,7 +28,7 @@ func (s *{{.TypeName}}) Insert(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, "Invalid input format.")
 	}
 }
-// Endpoint PUT [basehost]/{{.ResourceName}}/:id
+// Update serves the endpoint PUT [basehost]/{{.ResourceName}}/:id
 func (s *{{.TypeName}}) Update(c *gin.Context) {
 	id := c.Params.ByName("id")
 	var v {{.ViewModel.PackageName}}.{{.ViewModel.TypeName}}
@@ -43,7 +43,7 @@ func (s *{{.TypeName}}) Update(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, "Invalid input format.")
 	}
 }
-// Endpoint DELETE [basehost]/{{.ResourceName}}/:id
+// Delete serves the endpoint DELETE [basehost]/{{.ResourceName}}/:id
 func (s *{{.TypeName}}) Delete(c *gin.Context) {
 	id := c.Params.ByName("id")
 	if id != "" {
@@ -57,7 +57,7 @@ func (s *{{.TypeName}}) Delete(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, "Invalid input format.")
 	}
 }
-// Endpoint GET [basehost]/{{.ResourceName}}/:id
+// Find serves the endpoint GET [basehost]/{{.ResourceName}}/:id
 func (s *{{.TypeName}}) Find(c *gin.Context) {
 	id := c.Params.ByName("id")
 	if id != "" {
@@ -71,7 +71,7 @@ func (s *{{.TypeName}}) Find(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, "Invalid input format.")
 	}
 }
-// Endpoint GET [basehost]/{{.ResourceName}}?take=[value]&skip=[value]&count=[value]
+// List serves the endpoint GET [basehost]/{{.ResourceName}}?take=[value]&skip=[value]&count=[value]
 func (s *{{.TypeName}}) List(c *gin.Context) {
     take,_ := strconv.Atoi(c.DefaultQuery("take", "10"))
     skip,_ := strconv.Atoi(c.DefaultQuery("skip", "0"))
@@ -95,7 +95,7 @@ func (s *{{.TypeName}}) List(c *gin.Context) {
 		}
 	}
 }
-{{else}}{{if .Biz.IsReadOnly}}{{else}}// Endpoint POST [basehost]/{{.ResourceName}}
+{{else}}{{if .Biz.IsReadOnly}}{{else}}// Insert serves the endpoint POST [basehost]/{{.ResourceName}}
 func (s *{{.TypeName}}) Insert(c *gin.Context) {
 	var v {{.ViewModel.PackageName}}.{{.ViewModel.TypeName}}
 	if c.BindJSON(&v) == nil {
@@ -109,7 +109,7 @@ func (s *{{.TypeName}}) Insert(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, "Invalid input format.")
 	}
 }
-// Endpoint PUT [basehost]/{{.ResourceName}}
+// Update serves the endpoint PUT [basehost]/{{.ResourceName}}
 func (s *{{.TypeName}}) Update(c *gin.Context) {
 	var v {{.ViewModel.PackageName}}.{{.ViewModel.TypeName}}
 	if c.BindJSON(&v) == nil {
@@ -123,7 +123,7 @@ func (s *{{.TypeName}}) Update(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, "Invalid input format.")
 	}
 }
-// Endpoint POST [basehost]/{{.ResourceName}}/delete
+// Delete serves the endpoint POST [basehost]/{{.ResourceName}}/delete
 func (s *{{.TypeName}}) Delete(c *gin.Context) {
 	var v {{.ViewModel.PackageName}}.{{.ViewModel.TypeName}}
 	if c.BindJSON(&v) == nil {
@@ -137,7 +137,7 @@ func (s *{{.TypeName}}) Delete(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, "Invalid input format.")
 	}
 }
-// Endpoint POST [basehost]/{{.ResourceName}}/find
+// Find serves the endpoint POST [basehost]/{{.ResourceName}}/find
 func (s *{{.TypeName}}) Find(c *gin.Context) {
 	var v {{.ViewModel.PackageName}}.{{.ViewModel.TypeName}}
 	if c.BindJSON(&v) == nil {
@@ -152,7 +152,7 @@ func (s *{{.TypeName}}) Find(c *gin.Context) {
 	}
 }
 {{end}}
-// Endpoint GET [basehost]/{{.ResourceName}}?take=[value]&skip=[value]
+// List serves the endpoint GET [basehost]/{{.ResourceName}}?take=[value]&skip=[value]
 func (s *{{.TypeName}}) List(c *gin.Context) {
     take,_ := strconv.Atoi(c.DefaultQuery("take", "10"))
     skip,_ := strconv.Atoi(c.DefaultQuery("skip", "0"))
@@ -164,7 +164,7 @@ func (s *{{.TypeName}}) List(c *gin.Context) {
 		c.JSON(http.StatusOK, list)
 	}
 }
-// Endpoint GET [basehost]/{{.ResourceName}}/count
+// Count serves the endpoint GET [basehost]/{{.ResourceName}}/count
 func (s *{{.TypeName}}) Count(c *gin.Context) {
 	value,err := s.Biz.Count()
 	if err != nil {
