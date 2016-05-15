@@ -7,7 +7,7 @@
 	"Password": "feroslav",
 	"BasePackage": "github.com/MikeK123/prjtest",
 	"OutputPath": "$GOPATH/src/github.com/MikeK123/prjtest",
-	"ExcludedEntities": [],
+	"ExcludedEntities": ["person_finance_view", "project_by_hours_view", "project_earnings_by_work_view", "project_personal_costs_view", "project_view"],
 	"Entities": [],
 	"SkipDaoGeneration": false,
 	"SkipBizGeneration": false,
