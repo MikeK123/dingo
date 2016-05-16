@@ -2,6 +2,7 @@ package model
 
 import (
 	"database/sql"
+	"strconv"
 )
 
 type DatabaseSchema struct {
@@ -23,6 +24,7 @@ type View struct {
 }
 
 type Column struct {
+	TableName              string
 	ColumnName             string
 	IsPrimaryKey           bool
 	IsNullable             bool
@@ -33,4 +35,12 @@ type Column struct {
 	NumericPrecision       sql.NullInt64
 	NumericScale           sql.NullInt64
 	ColumnType             string
+}
+
+func (c Column) GetPostgresParam(i int) string {
+	return "$" + strconv.Itoa(i+1)
+}
+
+func (c Column) GetPostgresParamFrom(i int, s int) string {
+	return "$" + strconv.Itoa(s+i+1)
 }
