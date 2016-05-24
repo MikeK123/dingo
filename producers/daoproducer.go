@@ -1,8 +1,6 @@
 package producers
 
-import (
-	"github.com/MikeK123/dingo/model"
-)
+import "github.com/MikeK123/dingo/model"
 
 func ProduceDaoPackage(config *model.Configuration, schema *model.DatabaseSchema, mpkg *model.ModelPackage) (pkg *model.DaoPackage) {
 	pkg = &model.DaoPackage{PackageName: "dao", BasePackage: config.BasePackage}

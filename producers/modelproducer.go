@@ -25,12 +25,17 @@ func ProduceModelPackage(config *model.Configuration, schema *model.DatabaseSche
 				field.IsAutoInc = true
 			}
 			if column.IsNullable {
+				log.Printf("Name:%+v   Type:%+v", field.FieldName, field.FieldType)
 				if field.FieldType == "mysql.NullTime" {
 					field.IsNullable = true
 					field.NullableFieldType = field.FieldType[10:] // scorporate mysql.Null
 				} else if field.FieldType == "pq.NullTime" {
 					field.IsNullable = true
 					field.NullableFieldType = field.FieldType[7:] // scorporate pq.Null
+				} else if field.FieldType == "[]byte" {
+					log.Printf("f: %+v\nc: %+v", field, column)
+					field.IsNullable = true
+					field.NullableFieldType = "[]byte" // byte slice
 				} else {
 					field.IsNullable = true
 					field.NullableFieldType = field.FieldType[8:] // scorporate sql.Null
@@ -45,8 +50,23 @@ func ProduceModelPackage(config *model.Configuration, schema *model.DatabaseSche
 		for _, column := range view.Columns {
 			field := &model.ModelField{FieldName: getModelFieldName(column.ColumnName), FieldType: getModelFieldType(config.DatabaseType, pkg, column), FieldMetadata: getFieldMetadata(pkg, column)}
 			if column.IsNullable {
-				if field.FieldType != "time.Time" { // exclude time fields
+				log.Printf("VIEW: Name:%+v   Type:%+v", field.FieldName, field.FieldType)
+				// if field.FieldType != "time.Time" { // exclude time fields
+				// 	field.IsNullable = true
+				// }
+				// MK: follow same procedure as with standard tables
+				if field.FieldType == "mysql.NullTime" {
 					field.IsNullable = true
+					field.NullableFieldType = field.FieldType[10:] // scorporate mysql.Null
+				} else if field.FieldType == "pq.NullTime" {
+					field.IsNullable = true
+					field.NullableFieldType = field.FieldType[7:] // scorporate pq.Null
+				} else if field.FieldType == "[]byte" {
+					field.IsNullable = true
+					field.NullableFieldType = "[]byte" // byte slice
+				} else {
+					field.IsNullable = true
+					field.NullableFieldType = field.FieldType[8:] // scorporate sql.Null
 				}
 			}
 			mt.Fields = append(mt.Fields, field)
@@ -99,7 +119,15 @@ func getMySQLModelFieldType(pkg *model.ModelPackage, column *model.Column) strin
 			ft = "string"
 		}
 	case "blob", "mediumblob", "longblob", "varbinary", "binary":
-		ft = "[]byte"
+		// MK: had to replace this one with string as Nullable type is tricky
+		//ft = "[]byte"
+		if column.IsNullable {
+			ft = "sql.NullString"
+			pkg.AppendImport("database/sql")
+		} else {
+			ft = "string"
+		}
+
 	case "date", "time", "datetime", "timestamp":
 		if column.IsNullable {
 			ft = "mysql.NullTime"

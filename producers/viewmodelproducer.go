@@ -54,7 +54,9 @@ func getMySQLViewModelFieldType(pkg *model.ViewModelPackage, column *model.Colum
 	case "char", "varchar", "enum", "text", "longtext", "mediumtext", "tinytext":
 		ft = "string"
 	case "blob", "mediumblob", "longblob", "varbinary", "binary":
-		ft = "[]byte"
+		// MK: had to replace this one with string followed the change made in modelproducer
+		//ft = "[]byte"
+		ft = "string"
 	case "date", "time", "datetime", "timestamp":
 		ft = "time.Time"
 		pkg.AppendImport("time")

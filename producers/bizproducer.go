@@ -36,8 +36,8 @@ func ProduceBizPackage(config *model.Configuration, mpkg *model.ModelPackage, da
 		biz := &model.BizType{TypeName: mpkg.ViewModelTypes[j].TypeName + "Biz", PackageName: "biz"}
 		biz.Model = view
 		biz.Dao = daopkg.ViewDaoTypes[j]
-		biz.ViewModel = viewpkg.ViewModelTypes[j]
-// MK: check model generation, because for each IsNullable FieldType, there is no NullableFieldType - this bug is only for views !!!
+		biz.ViewModel = viewpkg.ViewModelTypes[i]
+		// MK: check model generation, because for each IsNullable FieldType, there is no NullableFieldType - this bug is only for views !!!
 		log.Printf("%#v - %#v", biz.Model.Fields[3].NullableFieldType, biz.Model.Fields[3].FieldType)
 		biz.Fields = append(biz.Fields, &model.BaseField{FieldName: "Dao", FieldType: "*" + daopkg.ViewDaoTypes[j].PackageName + "." + daopkg.ViewDaoTypes[j].TypeName})
 		biz.IsReadOnly = true
