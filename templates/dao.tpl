@@ -97,7 +97,7 @@ func (dao *{{.TypeName}}) Count(conn *sql.DB) (count int64, err error){
 }
 {{end}}
 {{range .ViewDaoTypes}}
-// Data access object for {{.Model.TypeName}} entities.
+// {{.TypeName}} is a data access object for {{.Model.TypeName}} entities.
 type {{.TypeName}} struct {
 	{{range .Fields}}{{.FieldName}} {{.FieldType}} `{{.FieldMetadata}}`
 	{{end}}
@@ -132,8 +132,7 @@ func (dao *{{.TypeName}}) Count(conn *sql.DB) (count int64, err error){
 			return 0, err
 		}
 		return count, nil
-	} else {
-		return 0, nil
 	}
+	return 0, nil
 }
 {{end}}

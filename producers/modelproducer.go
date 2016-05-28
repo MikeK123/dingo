@@ -25,7 +25,6 @@ func ProduceModelPackage(config *model.Configuration, schema *model.DatabaseSche
 				field.IsAutoInc = true
 			}
 			if column.IsNullable {
-				log.Printf("Name:%+v   Type:%+v", field.FieldName, field.FieldType)
 				if field.FieldType == "mysql.NullTime" {
 					field.IsNullable = true
 					field.NullableFieldType = field.FieldType[10:] // scorporate mysql.Null
@@ -33,7 +32,6 @@ func ProduceModelPackage(config *model.Configuration, schema *model.DatabaseSche
 					field.IsNullable = true
 					field.NullableFieldType = field.FieldType[7:] // scorporate pq.Null
 				} else if field.FieldType == "[]byte" {
-					log.Printf("f: %+v\nc: %+v", field, column)
 					field.IsNullable = true
 					field.NullableFieldType = "[]byte" // byte slice
 				} else {
@@ -50,7 +48,6 @@ func ProduceModelPackage(config *model.Configuration, schema *model.DatabaseSche
 		for _, column := range view.Columns {
 			field := &model.ModelField{FieldName: getModelFieldName(column.ColumnName), FieldType: getModelFieldType(config.DatabaseType, pkg, column), FieldMetadata: getFieldMetadata(pkg, column)}
 			if column.IsNullable {
-				log.Printf("VIEW: Name:%+v   Type:%+v", field.FieldName, field.FieldType)
 				// if field.FieldType != "time.Time" { // exclude time fields
 				// 	field.IsNullable = true
 				// }
@@ -91,6 +88,9 @@ func getModelFieldName(fieldname string) string {
 	if strings.HasSuffix(name, " Id") {
 		name = strings.TrimSuffix(name, "Id")
 		name += "ID"
+	}
+	if name == "Id" {
+		name = "ID"
 	}
 	name = strings.Replace(name, " ", "", -1)
 	return name

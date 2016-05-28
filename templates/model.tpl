@@ -10,7 +10,7 @@ type {{.TypeName}} struct {
 }
 {{end}}
 {{range .ViewModelTypes}}
-// Data transfer object for view {{.TypeName}}
+// {{.TypeName}} data transfer object
 type {{.TypeName}} struct {
 	{{range .Fields}}{{.FieldName}} {{.FieldType}} `{{.FieldMetadata}}`
 	{{end}}

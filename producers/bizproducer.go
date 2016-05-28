@@ -1,10 +1,6 @@
 package producers
 
-import (
-	"log"
-
-	"github.com/MikeK123/dingo/model"
-)
+import "github.com/MikeK123/dingo/model"
 
 func ProduceBizPackage(config *model.Configuration, mpkg *model.ModelPackage, daopkg *model.DaoPackage, viewpkg *model.ViewModelPackage) (pkg *model.BizPackage) {
 	pkg = &model.BizPackage{PackageName: "biz", BasePackage: config.BasePackage}
@@ -26,7 +22,6 @@ func ProduceBizPackage(config *model.Configuration, mpkg *model.ModelPackage, da
 		biz.Model = table
 		biz.Dao = daopkg.DaoTypes[i]
 		biz.ViewModel = viewpkg.ViewModelTypes[i]
-		//log.Printf("%#v - %#v", biz.Model.Fields[3].NullableFieldType, biz.Model.Fields[3].FieldType)
 		biz.Fields = append(biz.Fields, &model.BaseField{FieldName: "Dao", FieldType: "*" + daopkg.DaoTypes[i].PackageName + "." + daopkg.DaoTypes[i].TypeName})
 		pkg.BizTypes = append(pkg.BizTypes, biz)
 		i++
@@ -37,8 +32,6 @@ func ProduceBizPackage(config *model.Configuration, mpkg *model.ModelPackage, da
 		biz.Model = view
 		biz.Dao = daopkg.ViewDaoTypes[j]
 		biz.ViewModel = viewpkg.ViewModelTypes[i]
-		// MK: check model generation, because for each IsNullable FieldType, there is no NullableFieldType - this bug is only for views !!!
-		log.Printf("%#v - %#v", biz.Model.Fields[3].NullableFieldType, biz.Model.Fields[3].FieldType)
 		biz.Fields = append(biz.Fields, &model.BaseField{FieldName: "Dao", FieldType: "*" + daopkg.ViewDaoTypes[j].PackageName + "." + daopkg.ViewDaoTypes[j].TypeName})
 		biz.IsReadOnly = true
 		pkg.BizTypes = append(pkg.BizTypes, biz)
