@@ -22,6 +22,6 @@
 	],
 	"SkipDaoGeneration": false,
 	"SkipBizGeneration": false,
-	"SkipServiceGeneration": false,
+	"SkipServiceGeneration": true,
 	"ForcePluralResourceName": true
 }
