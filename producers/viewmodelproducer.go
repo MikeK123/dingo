@@ -128,3 +128,20 @@ func checkSimplePK(pkg *model.ViewModelPackage, mt *model.ViewModelType) bool {
 	}
 	return false
 }
+
+func ProduceMixedViewModelPackage(config *model.Configuration) (pkg *model.ViewModelPackage) {
+	pkg = &model.ViewModelPackage{PackageName: "viewmodel", BasePackage: config.BasePackage}
+	for _, mdt := range config.MixedDaoTables {
+		mt := &model.ViewModelType{PackageName: "viewmodel"}
+		for _, tn := range mdt.Tables {
+			field := &model.ViewModelField{
+				FieldName: getTitleLetters(getModelTypeName(tn)),
+				FieldType: getModelTypeName(tn),
+			}
+			mt.TypeName += getModelTypeName(tn)
+			mt.Fields = append(mt.Fields, field)
+		}
+		pkg.ViewModelTypes = append(pkg.ViewModelTypes, mt)
+	}
+	return pkg
+}

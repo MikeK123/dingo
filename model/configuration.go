@@ -8,6 +8,11 @@ import (
 	"strings"
 )
 
+type MixedDaoConf struct {
+	Tables []string
+	Where  string
+}
+
 type Configuration struct {
 	Hostname                string
 	Port                    string
@@ -19,6 +24,7 @@ type Configuration struct {
 	OutputPath              string
 	ExcludedEntities        []string
 	Entities                []string
+	MixedDaoTables          []MixedDaoConf
 	SkipDaoGeneration       bool
 	SkipBizGeneration       bool
 	SkipServiceGeneration   bool

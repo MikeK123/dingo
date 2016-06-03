@@ -28,6 +28,7 @@ type ViewModelField struct {
 type ModelType struct {
 	PackageName string
 	TypeName    string
+	Shortcut    string
 	Fields      []*ModelField
 	PKFields    []*ModelField
 	OtherFields []*ModelField
@@ -40,6 +41,17 @@ type DaoType struct {
 	Model              *ModelType
 	Entity             *Table
 	View               *View
+	HasAutoIncrementPK bool
+}
+
+type DaoMixedType struct {
+	PackageName        string
+	TypeName           string
+	Fields             []*BaseField
+	Model              []*ModelType
+	Entity             []*Table
+	Where              string
+	View               []*View
 	HasAutoIncrementPK bool
 }
 
@@ -87,6 +99,14 @@ type DaoPackage struct {
 	ImportPackages []string
 	DaoTypes       []*DaoType
 	ViewDaoTypes   []*DaoType
+}
+
+type DaoMixedPackage struct {
+	BasePackage       string
+	PackageName       string
+	ImportPackages    []string
+	DaoMixedTypes     []*DaoMixedType
+	ViewDaoMixedTypes []*DaoMixedType
 }
 
 type ViewModelPackage struct {
@@ -138,6 +158,20 @@ func (pkg *DaoPackage) HasImports() bool {
 }
 
 func (pkg *DaoPackage) AppendImport(pkgName string) bool {
+	for _, imp := range pkg.ImportPackages {
+		if imp == pkgName {
+			return false
+		}
+	}
+	pkg.ImportPackages = append(pkg.ImportPackages, pkgName)
+	return true
+}
+
+func (pkg *DaoMixedPackage) HasImports() bool {
+	return len(pkg.ImportPackages) > 0
+}
+
+func (pkg *DaoMixedPackage) AppendImport(pkgName string) bool {
 	for _, imp := range pkg.ImportPackages {
 		if imp == pkgName {
 			return false

@@ -9,6 +9,17 @@
 	"OutputPath": "$GOPATH/src/gitlab.com/mikek/ng/mng/api",
 	"ExcludedEntities": [],
 	"Entities": [],
+	"MixedDaoTables": [
+		{
+			"Tables": ["personal_notification", "icon_type"],
+			"Where": "personal_notification.icon_type_id=icon_type.icon_type_id"
+		},
+		{
+			"Tables": ["person", "person_detail"],
+			"Where": "person.person_id=person_detail.person_id"
+		}	
+	
+	],
 	"SkipDaoGeneration": false,
 	"SkipBizGeneration": false,
 	"SkipServiceGeneration": false,

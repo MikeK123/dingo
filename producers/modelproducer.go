@@ -39,6 +39,7 @@ func ProduceModelPackage(config *model.Configuration, schema *model.DatabaseSche
 					field.NullableFieldType = field.FieldType[8:] // scorporate sql.Null
 				}
 			}
+			mt.Shortcut = getTitleLetters(mt.TypeName)
 			mt.Fields = append(mt.Fields, field)
 		}
 	}
@@ -68,6 +69,23 @@ func ProduceModelPackage(config *model.Configuration, schema *model.DatabaseSche
 			}
 			mt.Fields = append(mt.Fields, field)
 		}
+	}
+	return pkg
+}
+
+func ProduceMixedModelPackage(config *model.Configuration) (pkg *model.ModelPackage) {
+	pkg = &model.ModelPackage{PackageName: "model", BasePackage: config.BasePackage}
+	for _, mdt := range config.MixedDaoTables {
+		mt := &model.ModelType{PackageName: "model"}
+		for _, tn := range mdt.Tables {
+			field := &model.ModelField{
+				FieldName: getTitleLetters(getModelTypeName(tn)),
+				FieldType: getModelTypeName(tn),
+			}
+			mt.TypeName += getModelTypeName(tn)
+			mt.Fields = append(mt.Fields, field)
+		}
+		pkg.ModelTypes = append(pkg.ModelTypes, mt)
 	}
 	return pkg
 }
@@ -109,7 +127,7 @@ func getModelFieldType(databaseType string, pkg *model.ModelPackage, column *mod
 }
 
 func getMySQLModelFieldType(pkg *model.ModelPackage, column *model.Column) string {
-	var ft string = ""
+	var ft string
 	switch column.DataType {
 	case "char", "varchar", "enum", "text", "longtext", "mediumtext", "tinytext":
 		if column.IsNullable {
@@ -168,7 +186,7 @@ func getMySQLModelFieldType(pkg *model.ModelPackage, column *model.Column) strin
 }
 
 func getPostgresModelFieldType(pkg *model.ModelPackage, column *model.Column) string {
-	var ft string = ""
+	var ft string
 	switch column.ColumnType {
 	case "char", "varchar", "text", "character":
 		if column.IsNullable {
@@ -235,4 +253,18 @@ func getFieldMetadata(pkg *model.ModelPackage, column *model.Column) string {
 	}
 	buffer.WriteString("\"")
 	return buffer.String()
+}
+
+func getTitleLetters(s string) string {
+	var res string
+	for _, l := range s {
+		ls := string(l)
+		if ls == strings.ToUpper(ls) {
+			res += ls
+		}
+	}
+	if res == "" && s != "" {
+		res = string(s[0])
+	}
+	return res
 }
