@@ -14,12 +14,9 @@ go:
 
 gobuild_args: -v -tags "mysql"
 
-before_install:
-    - mkdir $HOME/gopath/src/github.com/maxzerbini/prjtest
-
 services:
     - mysql
 
 before_script:
-    - mysql -u root -e 'create database customers;'
-    - mysql -u root customers < $HOME/gopath/src/github.com/maxzerbini/dingo/test/database.sql
+    - mysql -u root -e 'create database manage;'
+    - mysql -u root manage < $HOME/gopath/src/github.com/MikeK123/dingo/test/database.sql
