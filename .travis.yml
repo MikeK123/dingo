@@ -10,7 +10,7 @@ addons:
 language: go
 
 go:
-    - 1.6
+    - 1.7
 
 gobuild_args: -v -tags "mysql"
 

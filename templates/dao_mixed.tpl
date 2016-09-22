@@ -4,6 +4,8 @@ package {{.PackageName}}
 {{end}}{{end}}
 
 {{range .DaoMixedTypes}}
+// ---------------------------- {{.TypeName}} ----------------------------
+
 // {{.TypeName}} is a data access object for mixed {{range $i, $m := .Model}}{{if $i}}, {{end}}{{.TypeName}}{{end}} entities.
 type {{.TypeName}} struct {
 	{{range .Fields}}{{.FieldName}} {{.FieldType}} `{{.FieldMetadata}}`
@@ -11,8 +13,12 @@ type {{.TypeName}} struct {
 }
 
 // List the mixed {{range $i, $m := .Model}}{{if $i}}, {{end}}{{.TypeName}}{{end}} entities.
-func (dao *{{.TypeName}}) List(conn *sql.DB, take int, skip int) (list []*model.{{range .Model}}{{.TypeName}}{{end}}, err error) {
-	q := "SELECT {{range $j, $e := .Entity}}{{if $j}}, {{end}}{{range $i, $c := .Columns}}{{if $i}}, {{end}}{{$e.TableName}}.{{.ColumnName}}{{end}}{{end}} FROM {{range $j, $e := .Entity}}{{if $j}}, {{end}}{{.TableName}}{{end}} WHERE {{.Where}} LIMIT ? OFFSET ?"
+func (dao *{{.TypeName}}) List(conn *sql.DB, take int, skip int, whereEx string) (list []*model.{{.Shortcut}}, err error) {
+	q := "SELECT {{range $j, $e := .Entity}}{{if $j}}, {{end}}{{range $i, $c := .Columns}}{{if $i}}, {{end}}`{{$e.TableShortcut}}`.`{{.ColumnName}}`{{end}}{{end}} FROM {{range $j, $e := .Entity}}{{if $j}}, {{end}}`{{.TableName}}` `{{.TableShortcut}}`{{end}} WHERE {{.Where}}"
+	if whereEx != "" {
+		q += " AND " + whereEx
+	}
+	q += " LIMIT ? OFFSET ?"
 	rows, err := conn.Query(q, take, skip)
 	if err != nil {
 		return nil, err
@@ -25,7 +31,7 @@ func (dao *{{.TypeName}}) List(conn *sql.DB, take int, skip int) (list []*model.
 			return nil, err
 		}
 
-		dto := &model.{{range .Model}}{{.TypeName}}{{end}}{		
+		dto := &model.{{.Shortcut}}{		
 			{{range $i, $m := .Model}}{{.Shortcut}}: *dto{{$i}},
 			{{end}}
 		}

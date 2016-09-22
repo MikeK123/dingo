@@ -2,6 +2,7 @@ package producers
 
 import (
 	"log"
+	"strings"
 
 	"github.com/MikeK123/dingo/model"
 )
@@ -133,12 +134,12 @@ func ProduceMixedViewModelPackage(config *model.Configuration) (pkg *model.ViewM
 	pkg = &model.ViewModelPackage{PackageName: "viewmodel", BasePackage: config.BasePackage}
 	for _, mdt := range config.MixedDaoTables {
 		mt := &model.ViewModelType{PackageName: "viewmodel"}
-		for _, tn := range mdt.Tables {
+		for i, tn := range mdt.Tables {
 			field := &model.ViewModelField{
-				FieldName: getTitleLetters(getModelTypeName(tn)),
+				FieldName: strings.Title(mdt.Shortcuts[i]),
 				FieldType: getModelTypeName(tn),
 			}
-			mt.TypeName += getModelTypeName(tn)
+			mt.TypeName += getThreeLetters(getModelTypeName(tn))
 			mt.Fields = append(mt.Fields, field)
 		}
 		pkg.ViewModelTypes = append(pkg.ViewModelTypes, mt)

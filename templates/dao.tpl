@@ -8,6 +8,8 @@ import "errors"
 var Connection *sql.DB
 
 {{range .DaoTypes}}
+// ---------------------------- {{.TypeName}} ----------------------------
+
 // {{.TypeName}} is a data access object for {{.Model.TypeName}} entities.
 type {{.TypeName}} struct {
 	{{range .Fields}}{{.FieldName}} {{.FieldType}} `{{.FieldMetadata}}`
@@ -15,7 +17,7 @@ type {{.TypeName}} struct {
 }
 // Insert a new {{.Model.TypeName}} entity and returns the last insert Id.
 func (dao *{{.TypeName}}) Insert(conn *sql.DB, dto *{{.Model.PackageName}}.{{.Model.TypeName}})(lastInsertID int64, err error) {
-	q := "INSERT INTO {{.Entity.TableName}} VALUES ({{range $i, $e := .Model.Fields}}{{if $i}}, {{end}}?{{end}})"
+	q := "INSERT INTO `{{.Entity.TableName}}` VALUES ({{range $i, $e := .Model.Fields}}{{if $i}}, {{end}}?{{end}})"
 	res, err := conn.Exec(q, {{range $i, $e := .Model.Fields}}{{if $i}}, {{end}}{{if .IsAutoInc}}sql.NullInt64{}{{else}}dto.{{.FieldName}}{{end}}{{end}})
     if err != nil {
 		return -1, err
@@ -25,8 +27,8 @@ func (dao *{{.TypeName}}) Insert(conn *sql.DB, dto *{{.Model.PackageName}}.{{.Mo
 }
 // Update a {{.Model.TypeName}} entity and returns the number of affected rows.
 func (dao *{{.TypeName}}) Update(conn *sql.DB, dto *{{.Model.PackageName}}.{{.Model.TypeName}})(rowsAffected int64, err error) {
-	q := "UPDATE {{.Entity.TableName}} SET {{range $i, $e := .Entity.OtherColumns}}{{if $i}}, {{end}}{{.ColumnName}}=?{{end}}"
-	q += " WHERE {{range $i, $e := .Entity.PrimaryKeys}}{{if $i}} AND {{end}}{{.ColumnName}} = ?{{end}}"
+	q := "UPDATE `{{.Entity.TableName}}` SET {{range $i, $e := .Entity.OtherColumns}}{{if $i}}, {{end}}`{{.ColumnName}}`=?{{end}}"
+	q += " WHERE {{range $i, $e := .Entity.PrimaryKeys}}{{if $i}} AND {{end}}`{{.ColumnName}}` = ?{{end}}"
 	res, err := conn.Exec(q{{if .Model.OtherFields}},{{end}} {{range $i, $e := .Model.OtherFields}}{{if $i}}, {{end}}dto.{{.FieldName}}{{end}}, {{range $i, $e := .Model.PKFields}}{{if $i}}, {{end}}dto.{{.FieldName}}{{end}})
     if err != nil {
 		return -1, err
@@ -36,8 +38,8 @@ func (dao *{{.TypeName}}) Update(conn *sql.DB, dto *{{.Model.PackageName}}.{{.Mo
 }
 // Delete a {{.Model.TypeName}} entity and returns the number of affected rows.
 func (dao *{{.TypeName}}) Delete(conn *sql.DB, dto *{{.Model.PackageName}}.{{.Model.TypeName}})(rowsAffected int64, err error) {
-	q := "DELETE FROM {{.Entity.TableName}}"
-	q += " WHERE {{range $i, $e := .Entity.PrimaryKeys}}{{if $i}} AND {{end}}{{.ColumnName}} = ?{{end}}"
+	q := "DELETE FROM `{{.Entity.TableName}}`"
+	q += " WHERE {{range $i, $e := .Entity.PrimaryKeys}}{{if $i}} AND {{end}}`{{.ColumnName}}` = ?{{end}}"
 	res, err := conn.Exec(q, {{range $i, $e := .Model.PKFields}}{{if $i}}, {{end}}dto.{{.FieldName}}{{end}})
     if err != nil {
 		return -1, err
@@ -47,7 +49,7 @@ func (dao *{{.TypeName}}) Delete(conn *sql.DB, dto *{{.Model.PackageName}}.{{.Mo
 }
 // FindByPrimaryKey finds the {{.Model.TypeName}} entity by primary keys, returns nil if not found.
 func (dao *{{.TypeName}}) FindByPrimaryKey(conn *sql.DB, {{range $i, $e := .Model.PKFields}}{{if $i}}, {{end}}{{.FieldName}} {{.FieldType}}{{end}}) (dto *{{.Model.PackageName}}.{{.Model.TypeName}}, err error) {
-	q := "SELECT {{range $i, $e := .Entity.Columns}}{{if $i}}, {{end}}{{.ColumnName}}{{end}} FROM {{.Entity.TableName}} WHERE {{range $i, $e := .Entity.PrimaryKeys}}{{if $i}} AND {{end}}{{.ColumnName}} = ?{{end}}"
+	q := "SELECT {{range $i, $e := .Entity.Columns}}{{if $i}}, {{end}}`{{.ColumnName}}`{{end}} FROM `{{.Entity.TableName}}` WHERE {{range $i, $e := .Entity.PrimaryKeys}}{{if $i}} AND {{end}}`{{.ColumnName}}` = ?{{end}}"
 	rows, err := conn.Query(q, {{range $i, $e := .Model.PKFields}}{{if $i}}, {{end}}{{.FieldName}}{{end}})
 	if err != nil {
 		return nil, err
@@ -63,8 +65,12 @@ func (dao *{{.TypeName}}) FindByPrimaryKey(conn *sql.DB, {{range $i, $e := .Mode
 	return nil, errors.New("Not found.")
 }
 // List the {{.Model.TypeName}} entities.
-func (dao *{{.TypeName}}) List(conn *sql.DB, take int, skip int) (list []*{{.Model.PackageName}}.{{.Model.TypeName}}, err error) {
-	q := "SELECT {{range $i, $e := .Entity.Columns}}{{if $i}}, {{end}}{{.ColumnName}}{{end}} FROM {{.Entity.TableName}} LIMIT ? OFFSET ?"
+func (dao *{{.TypeName}}) List(conn *sql.DB, take int, skip int, whereEx string) (list []*{{.Model.PackageName}}.{{.Model.TypeName}}, err error) {
+	q := "SELECT {{range $i, $e := .Entity.Columns}}{{if $i}}, {{end}}`{{.ColumnName}}`{{end}} FROM `{{.Entity.TableName}}`"
+	if whereEx != "" {
+		q += " WHERE " + whereEx
+	}
+	q += " LIMIT ? OFFSET ?"
 	rows, err := conn.Query(q, take, skip)
 	if err != nil {
 		return nil, err
@@ -80,8 +86,11 @@ func (dao *{{.TypeName}}) List(conn *sql.DB, take int, skip int) (list []*{{.Mod
 	return list, nil
 }
 // Count the {{.Model.TypeName}} entities.
-func (dao *{{.TypeName}}) Count(conn *sql.DB) (count int64, err error){
-	q := "SELECT count(*) FROM {{.Entity.TableName}}"
+func (dao *{{.TypeName}}) Count(conn *sql.DB, whereEx string) (count int64, err error){
+	q := "SELECT count(*) FROM `{{.Entity.TableName}}`"
+	if whereEx != "" {
+		q += " WHERE " + whereEx
+	}
 	rows, err := conn.Query(q)
 	if err != nil {
 		return 0, err
@@ -103,8 +112,12 @@ type {{.TypeName}} struct {
 	{{end}}
 }
 // List the {{.Model.TypeName}} entities in the view.
-func (dao *{{.TypeName}}) List(conn *sql.DB, take int, skip int) (list []*{{.Model.PackageName}}.{{.Model.TypeName}}, err error){
-	q := "SELECT {{range $i, $e := .View.Columns}}{{if $i}}, {{end}}{{.ColumnName}}{{end}} FROM {{.View.ViewName}} LIMIT ? OFFSET ?"
+func (dao *{{.TypeName}}) List(conn *sql.DB, take int, skip int, whereEx string) (list []*{{.Model.PackageName}}.{{.Model.TypeName}}, err error){
+	q := "SELECT {{range $i, $e := .View.Columns}}{{if $i}}, {{end}}`{{.ColumnName}}`{{end}} FROM `{{.View.ViewName}}`"
+	if whereEx != "" {
+		q += " WHERE " + whereEx
+	}
+	q += " LIMIT ? OFFSET ?"
 	rows, err := conn.Query(q, take, skip)
 	if err != nil {
 		return nil, err
@@ -120,8 +133,11 @@ func (dao *{{.TypeName}}) List(conn *sql.DB, take int, skip int) (list []*{{.Mod
 	return list, nil
 }
 // Count the {{.Model.TypeName}} entities in the view.
-func (dao *{{.TypeName}}) Count(conn *sql.DB) (count int64, err error){
-	q := "SELECT count(*) FROM {{.View.ViewName}}"
+func (dao *{{.TypeName}}) Count(conn *sql.DB, whereEx string) (count int64, err error){
+	q := "SELECT count(*) FROM `{{.View.ViewName}}`"
+	if whereEx != "" {
+		q += " WHERE " + whereEx
+	}
 	rows, err := conn.Query(q)
 	if err != nil {
 		return 0, err

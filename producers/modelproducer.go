@@ -77,13 +77,15 @@ func ProduceMixedModelPackage(config *model.Configuration) (pkg *model.ModelPack
 	pkg = &model.ModelPackage{PackageName: "model", BasePackage: config.BasePackage}
 	for _, mdt := range config.MixedDaoTables {
 		mt := &model.ModelType{PackageName: "model"}
-		for _, tn := range mdt.Tables {
+		for i, tn := range mdt.Tables {
 			field := &model.ModelField{
-				FieldName: getTitleLetters(getModelTypeName(tn)),
+				FieldName: strings.Title(mdt.Shortcuts[i]),
 				FieldType: getModelTypeName(tn),
 			}
-			mt.TypeName += getModelTypeName(tn)
+			//mt.TypeName += getModelTypeName(tn)
+			mt.TypeName += getThreeLetters(getModelTypeName(tn))
 			mt.Fields = append(mt.Fields, field)
+			mt.Shortcut = mdt.Shortcuts[i]
 		}
 		pkg.ModelTypes = append(pkg.ModelTypes, mt)
 	}
@@ -265,6 +267,22 @@ func getTitleLetters(s string) string {
 	}
 	if res == "" && s != "" {
 		res = string(s[0])
+	}
+	return res
+}
+
+func getThreeLetters(s string) string {
+	var res string
+	var i int
+	for _, r := range s {
+		sr := string(r)
+		i++
+		if sr == strings.ToUpper(sr) {
+			i = 0
+		}
+		if i < 3 {
+			res += sr
+		}
 	}
 	return res
 }

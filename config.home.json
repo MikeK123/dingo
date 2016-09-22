@@ -1,5 +1,5 @@
 {
-	"Hostname": "localhost", 
+	"Hostname": "192.168.5.1", 
 	"Port": "3306", 
 	"DatabaseType": "MySQL",
 	"DatabaseName": "manage", 
@@ -19,11 +19,6 @@
 			"Tables": ["person", "person_detail"],
 			"Shortcuts": ["pe","pd"],
 			"Where": "pe.person_id=pd.person_id"
-		},	
-		{
-			"Tables": ["personal_event", "event_type"],
-			"Shortcuts": ["pev","et"],
-			"Where": "pev.event_type_id=et.event_type_id"
 		}	
 	
 	],

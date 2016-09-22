@@ -9,8 +9,9 @@ import (
 )
 
 type MixedDaoConf struct {
-	Tables []string
-	Where  string
+	Tables    []string
+	Shortcuts []string
+	Where     string
 }
 
 type Configuration struct {

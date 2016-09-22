@@ -39,6 +39,7 @@ type DaoType struct {
 	TypeName           string
 	Fields             []*BaseField
 	Model              *ModelType
+	Where              string
 	Entity             *Table
 	View               *View
 	HasAutoIncrementPK bool
@@ -47,6 +48,7 @@ type DaoType struct {
 type DaoMixedType struct {
 	PackageName        string
 	TypeName           string
+	Shortcut           string
 	Fields             []*BaseField
 	Model              []*ModelType
 	Entity             []*Table

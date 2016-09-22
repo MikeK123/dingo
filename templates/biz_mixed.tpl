@@ -3,6 +3,8 @@ package {{.PackageName}}
 {{range .ImportPackages}}import "{{.}}"
 {{end}}{{end}}
 {{range .BizTypes}}
+// ---------------------------- {{.Model.TypeName}} ----------------------------
+
 // {{.TypeName}} is a business object for {{.Model.TypeName}} entities.
 type {{.TypeName}} struct {
 	{{range .Fields}}{{.FieldName}} {{.FieldType}}{{end}}
@@ -29,8 +31,8 @@ func (b *{{.TypeName}}) ToModel(v *{{.ViewModel.PackageName}}.{{.ViewModel.TypeN
 }
 
 // List the {{.Model.TypeName}} entities.
-func (b *{{.TypeName}}) List(take int, skip int) (list []*{{.ViewModel.PackageName}}.{{.ViewModel.TypeName}}, err error) {
-	mlist, err := b.Dao.List(dao.Connection, take, skip)
+func (b *{{.TypeName}}) List(take int, skip int, whereEx string) (list []*{{.ViewModel.PackageName}}.{{.ViewModel.TypeName}}, err error) {
+	mlist, err := b.Dao.List(dao.Connection, take, skip, whereEx)
 	if err != nil {
 		return nil, err
 	}

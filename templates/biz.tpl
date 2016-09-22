@@ -3,6 +3,8 @@ package {{.PackageName}}
 {{range .ImportPackages}}import "{{.}}"
 {{end}}{{end}}
 {{range .BizTypes}}
+// ---------------------------- {{.Model.TypeName}} ---------------------------- 
+
 // {{.TypeName}} is a business object for {{.Model.TypeName}} entities.
 type {{.TypeName}} struct {
 	{{range .Fields}}{{.FieldName}} {{.FieldType}}{{end}}
@@ -67,8 +69,8 @@ func (b *{{.TypeName}}) DeleteByID(id string) (rowsAffected int64, err error) {
 	return b.Dao.Delete(dao.Connection, b.ToModel(v))
 }{{end}}{{end}}
 // List the {{.Model.TypeName}} entities.
-func (b *{{.TypeName}}) List(take int, skip int) (list []*{{.ViewModel.PackageName}}.{{.ViewModel.TypeName}}, err error) {
-	mlist, err := b.Dao.List(dao.Connection, take, skip)
+func (b *{{.TypeName}}) List(take int, skip int, whereEx string) (list []*{{.ViewModel.PackageName}}.{{.ViewModel.TypeName}}, err error) {
+	mlist, err := b.Dao.List(dao.Connection, take, skip, whereEx)
 	if err != nil {
 		return nil, err
 	}
@@ -78,7 +80,7 @@ func (b *{{.TypeName}}) List(take int, skip int) (list []*{{.ViewModel.PackageNa
 	return list, nil
 }
 // Count the {{.Model.TypeName}} entities.
-func (b *{{.TypeName}}) Count() (count int64, err error){
-	return b.Dao.Count(dao.Connection)
+func (b *{{.TypeName}}) Count(whereEx string) (count int64, err error){
+	return b.Dao.Count(dao.Connection, whereEx)
 }
 {{end}}

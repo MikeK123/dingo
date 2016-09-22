@@ -1,6 +1,10 @@
 package producers
 
-import "github.com/MikeK123/dingo/model"
+import (
+	"strings"
+
+	"github.com/MikeK123/dingo/model"
+)
 
 func ProduceDaoPackage(config *model.Configuration, schema *model.DatabaseSchema, mpkg *model.ModelPackage) (pkg *model.DaoPackage) {
 	pkg = &model.DaoPackage{PackageName: "dao", BasePackage: config.BasePackage}
@@ -46,7 +50,7 @@ func FindTable(schema *model.DatabaseSchema, tn string) (*model.Table, int) {
 	return nil, 0
 }
 
-func ProduceDaoFromQueryPackage(config *model.Configuration, schema *model.DatabaseSchema, mpkg *model.ModelPackage) (pkg *model.DaoMixedPackage) {
+func ProduceDaoMixedPackage(config *model.Configuration, schema *model.DatabaseSchema, mpkg *model.ModelPackage) (pkg *model.DaoMixedPackage) {
 	pkg = &model.DaoMixedPackage{PackageName: "dao", BasePackage: config.BasePackage}
 	pkg.AppendImport(mpkg.BasePackage + "/" + mpkg.PackageName)
 	pkg.AppendImport("database/sql")
@@ -58,26 +62,23 @@ func ProduceDaoFromQueryPackage(config *model.Configuration, schema *model.Datab
 			View:        make([]*model.View, 0, 2),
 			Where:       mdt.Where,
 		}
-		for _, tn := range mdt.Tables {
+		for j, tn := range mdt.Tables {
 			t, i := FindTable(schema, tn)
 			m := mpkg.ModelTypes[i]
-			dao.TypeName += m.TypeName
+			//m.TypeName = getThreeLetters(m.TypeName)
+			m.Shortcut = strings.Title(mdt.Shortcuts[j])
+			dao.TypeName += getThreeLetters(m.TypeName)
+			dao.Shortcut += getThreeLetters(m.TypeName)
 			dao.Model = append(dao.Model, m)
+			t.TableShortcut = mdt.Shortcuts[j]
 			dao.Entity = append(dao.Entity, t)
 			if CheckAutoIncrementPK(t) {
 				dao.HasAutoIncrementPK = true
 			}
 		}
 		dao.TypeName += "Dao"
+		//spew.Dump(dao)
 		pkg.DaoMixedTypes = append(pkg.DaoMixedTypes, dao)
 	}
-	// i = 0
-	// for _, view := range schema.Views {
-	// 	dao := &model.DaoType{TypeName: mpkg.ViewModelTypes[i].TypeName + "Dao", PackageName: "dao"}
-	// 	dao.Model = mpkg.ViewModelTypes[i]
-	// 	dao.View = view
-	// 	pkg.ViewDaoTypes = append(pkg.ViewDaoTypes, dao)
-	// 	i++
-	// }
 	return pkg
 }
